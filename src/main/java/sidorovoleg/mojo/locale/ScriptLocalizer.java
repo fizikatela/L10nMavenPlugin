@@ -8,25 +8,14 @@ import java.text.CharacterIterator;
  * @author fizikatela
  * Date: 28.01.2018
  */
-public class Localizer {
+public class ScriptLocalizer extends AbstractLocalizer {
 
-    private Dictionary dictionary;
-
-    public Localizer(Path dictPath) throws IOException {
-        dictionary = new Dictionary(dictPath);
+    public ScriptLocalizer(Path dictPath) throws IOException {
+        super(dictPath);
     }
 
-    public String localizeLine(String line, String locale) {
-        String translation = dictionary.getTranslations(line, locale);
-        if (translation != null) {
-            return translation;
-        }
-
-        return parse(line, locale);
-    }
-
-    private String parse(String line, String locale) {
-        LocalizeCharacterIterator iterator = new LocalizeCharacterIterator(line);
+    @Override
+    protected String parseLine(LocalizeCharacterIterator iterator, String locale) {
         for (char c = iterator.first(); c != CharacterIterator.DONE; c = iterator.next()) {
             int beginIdx, endIdx;
             switch (c) {
@@ -49,12 +38,5 @@ public class Localizer {
             }
         }
         return iterator.getText();
-    }
-
-    private void translations(String locale, LocalizeCharacterIterator iterator, int beginIdx, int endIdx) {
-        String translation = dictionary.getTranslations(iterator.getText().substring(beginIdx, endIdx), locale);
-        if (translation != null) {
-            iterator.overlayText(translation, beginIdx, endIdx);
-        }
     }
 }

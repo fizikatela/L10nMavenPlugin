@@ -1,6 +1,7 @@
 package sidorovoleg.mojo;
 
-import sidorovoleg.mojo.locale.Localizer;
+import sidorovoleg.mojo.locale.AbstractLocalizer;
+import sidorovoleg.mojo.locale.LocalizerFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -15,6 +16,10 @@ import java.util.stream.Stream;
  * Date: 28.01.2018
  */
 public class L10nFileVizitor extends SimpleFileVisitor<Path> {
+
+    private static final String DICT_EXT = ".dct";
+
+    private static final String ALL_FILE_EXT = "*.";
 
     private Path srcPath;
 
@@ -48,15 +53,15 @@ public class L10nFileVizitor extends SimpleFileVisitor<Path> {
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 
-        Path dictPath = Paths.get(file.toAbsolutePath().toString() + ".dct");
-        if (Files.exists(dictPath) && Files.isRegularFile(dictPath)) {
-            Localizer localizer = new Localizer(dictPath);
+        Path dictPath = Paths.get(file.toAbsolutePath().toString() + DICT_EXT);
+        if (isAcceptFile(file) && Files.exists(dictPath) && Files.isRegularFile(dictPath)) {
+            AbstractLocalizer localizer = LocalizerFactory.getLocalizer(file, dictPath);
             Map<String, List<String>> contents = new HashMap<>();
             try (Stream<String> lines = Files.lines(file)) {
-                locales.forEach(locale ->
-                        lines.forEachOrdered(line ->
-                                contents.computeIfAbsent(locale, emptyList -> new ArrayList<>())
-                                        .add(localizer.localizeLine(line, locale))));
+                lines.forEach(line -> locales
+                        .forEach(locale -> contents
+                                .computeIfAbsent(locale, emptyList -> new ArrayList<>())
+                                .add(localizer.localize(line, locale))));
             }
 
             for (Map.Entry<String, List<String>> entry : contents.entrySet()) {
@@ -75,5 +80,13 @@ public class L10nFileVizitor extends SimpleFileVisitor<Path> {
 
     private Path getLocalePath(String locale) {
         return Paths.get(destPath.toAbsolutePath().toString() + "/" + srcPath.getFileName() + "_" + locale);
+    }
+
+    private boolean isAcceptFile(Path file) {
+        String ext = FileType.getExtFile(file);
+        if (ext == null || DICT_EXT.equals(ext)) {
+            return false;
+        }
+        return ALL_FILE_EXT.equals(ext) || exts.contains(ext);
     }
 }
