@@ -16,21 +16,26 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * Плагин для построчкой локализации файлов
  * @author fizikatela
  * Date: 28.01.2018
  */
 @Mojo(name = "l10n", defaultPhase = LifecyclePhase.PROCESS_SOURCES, threadSafe = true)
 public class L10nMavenPlugin extends AbstractMojo {
 
+    /** Список директорий для локализации */
     @Parameter(name = "srcFolders", required = true)
     private List<File> srcFolders;
 
+    /** Директория для результата локализации */
     @Parameter(name = "destFolder", required = true)
     private File destFolder;
 
+    /** Список локалей локализации */
     @Parameter(name = "locales", required = true)
     private Set<String> locales;
 
+    /** Список расширений файлов для локализации */
     @Parameter(name = "exts", required = true)
     private Set<String> exts;
 

@@ -6,29 +6,48 @@ import java.nio.file.Path;
 import java.util.*;
 
 /**
+ * Класс словаря
  * @author fizikatela
  * Date: 28.01.2018
  */
 public class Dictionary {
 
+    /** Словарь */
     private Map<String, List<DictionaryItem>> dictonaty;
 
+    /**
+     * Конструктор
+     * @param dictPath путь до словаря
+     * @throws IOException при ошибка ввода / вывода
+     */
     public Dictionary(Path dictPath) throws IOException {
         dictonaty = load(dictPath);
     }
 
-    public String getTranslations(String key, String locale) {
+    /**
+     * Возвращает локализированную строку из словаря
+     * @param line   строка для поиска в словаре
+     * @param locale локаль
+     * @return локализированную строку из словаря или {@code null}
+     */
+    public String getTranslations(String line, String locale) {
         List<DictionaryItem> dict = dictonaty.get(locale);
         if (dict == null) {
             return null;
         }
 
         Optional<DictionaryItem> result = dict.stream()
-                .filter(di -> di.getKey().equals(key))
+                .filter(di -> di.getLine().equals(line))
                 .findFirst();
-        return result.isPresent() ? result.get().getValue() : null;
+        return result.isPresent() ? result.get().getTranslation() : null;
     }
 
+    /**
+     * Загружает словарь
+     * @param dictPath путь до словаря
+     * @return загруженный словарь
+     * @throws IOException при ошибках ввода / вывода
+     */
     private Map<String, List<DictionaryItem>> load(Path dictPath) throws IOException {
         Map<String, List<DictionaryItem>> dict = new HashMap<>();
         String locale = null;

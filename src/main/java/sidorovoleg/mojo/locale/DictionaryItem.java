@@ -1,38 +1,51 @@
 package sidorovoleg.mojo.locale;
 
 /**
+ * Класс элемента словаря
  * @author fizikatela
  * Date: 28.01.2018
  */
 public class DictionaryItem {
 
-    private String key;
-    private String value;
+    /** Строка */
+    private String line;
+    /** Перевод */
+    private String translation;
+    /** Признак использования при локализации */
     private boolean isUsed;
 
+    /**
+     * Конструктор
+     * @param pair пара [строка - перевод]
+     */
     public DictionaryItem(String[] pair) {
         this(pair[0], pair[1]);
     }
 
-    public DictionaryItem(String key, String value) {
-        this.key = key;
-        this.value = value;
+    /**
+     * Конструктор
+     * @param line        строка
+     * @param translation перевод
+     */
+    public DictionaryItem(String line, String translation) {
+        this.line = line;
+        this.translation = translation;
     }
 
-    public String getKey() {
-        return key;
+    public String getLine() {
+        return line;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setLine(String line) {
+        this.line = line;
     }
 
-    public String getValue() {
-        return value;
+    public String getTranslation() {
+        return translation;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setTranslation(String translation) {
+        this.translation = translation;
     }
 
     public boolean isUsed() {

@@ -6,16 +6,26 @@ import java.text.CharacterIterator;
 import java.util.Objects;
 
 /**
+ * Итератор по символам строки
+ * Базовый класс {@link java.text.StringCharacterIterator}
  * @author fizikatela
  * Date: 10.02.2018
  */
 public class LocalizeCharacterIterator implements CharacterIterator {
 
+    /** Строка итерирования */
     private String text;
+    /** Индекс начало итерирования */
     private int begin;
+    /** Индекс конца итерирования */
     private int end;
+    /** Текущая позиция итератора */
     private int pos;
 
+    /**
+     * Конструктор
+     * @param text строка итерирования
+     */
     public LocalizeCharacterIterator(String text) {
         this.text = text;
         this.begin = 0;
@@ -119,40 +129,78 @@ public class LocalizeCharacterIterator implements CharacterIterator {
         }
     }
 
-    public boolean equalsPrevious(char c) {
-        return equalsPrevious(c, pos);
+    /**
+     * Сравнивает предыдущий символ итератора с символом для сравнения
+     * @param ch символ для сравнения
+     * @return {@code true}, если символы совпадают, иначе {@code false}
+     */
+    public boolean equalsPrevious(char ch) {
+        return equalsPrevious(ch, pos - 1);
     }
 
-    public boolean equalsPrevious(char c, int pos) {
+    /**
+     * Сравнивает символ в строке итератора по индексу с символом для сравнени
+     * @param ch  символ для сравнения
+     * @param pos индекс символа в строке итератора
+     * @return @return {@code true}, если символы совпадают, иначе {@code false}
+     */
+    public boolean equalsPrevious(char ch, int pos) {
         if (pos > 0 && pos < end) {
-            return text.charAt(pos - 1) == c;
+            return text.charAt(pos) == ch;
         }
         return false;
     }
 
+    /**
+     * Заменяет текст в строке итератора по заданным идексам и обновляет позицию итератора
+     * @param overlay текст для замены
+     * @param sIdx    индекс начала заменяемого текста
+     * @param eIdx    индекс конца заменяемого текста
+     */
     public void overlayText(String overlay, int sIdx, int eIdx) {
         text = StringUtils.overlay(text, overlay, sIdx, eIdx);
         pos = sIdx + overlay.length();
         end = text.length();
     }
 
-    public int findNext(char c) {
-        return findNext(c, pos + 1);
+    /**
+     * Возвращает индекс следующего символа
+     * @param ch символ для поиска
+     * @return индекс следующего символа или {@code -1}
+     */
+    public int findNext(char ch) {
+        return findNext(ch, pos + 1);
     }
 
-    public int findNext(char c, int idx) {
-        return text.indexOf(c, idx);
+    /**
+     * Возвращает индекс следующего символа
+     * @param ch  символ для поиска
+     * @param idx индекс на для начала поиска
+     * @return индекс символа или {@code -1}
+     */
+    public int findNext(char ch, int idx) {
+        return text.indexOf(ch, idx);
     }
 
-    public int findNext(char c, char excСhShielding) {
+    /**
+     * Возвращает индекс следующего символа без экранирования
+     * @param ch          символ для поиска
+     * @param chShielding символ экранирования
+     * @return индекс символа или {@code -1}
+     */
+    public int findNextWithoutShield(char ch, char chShielding) {
         int findIdx = pos;
         do {
             findIdx++;
-            findIdx = findNext(c, findIdx);
-        } while (findIdx != -1 && equalsPrevious(excСhShielding, findIdx));
+            findIdx = findNext(ch, findIdx);
+        } while (findIdx != -1 && equalsPrevious(chShielding, findIdx - 1));
         return  findIdx;
     }
 
+    /**
+     * Возвращает строку итерирования
+     * @return строку итерирования
+     */
     public String getText() {
         return text;
     }
