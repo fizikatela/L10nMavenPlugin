@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Класс словаря
@@ -13,7 +14,9 @@ import java.util.*;
 public class Dictionary {
 
     /** Словарь */
-    private Map<String, List<DictionaryItem>> dictonaty;
+    private final Map<String, List<DictionaryItem>> dictonaty;
+    /** Имя файла со словарем */
+    private final String fileName;
 
     /**
      * Конструктор
@@ -21,7 +24,9 @@ public class Dictionary {
      * @throws IOException при ошибка ввода / вывода
      */
     public Dictionary(Path dictPath) throws IOException {
+        fileName = dictPath.getFileName().toString();
         dictonaty = load(dictPath);
+        checkDuplicates();
     }
 
     /**
@@ -36,10 +41,15 @@ public class Dictionary {
             return null;
         }
 
-        Optional<DictionaryItem> result = dict.stream()
-                .filter(di -> di.getLine().equals(line))
-                .findFirst();
-        return result.isPresent() ? result.get().getTranslation() : null;
+        DictionaryItem item = dict.stream()
+                .filter(di -> line.equals(di.getLine()))
+                .findFirst().orElse(null);
+        if (item == null) {
+            return null;
+        }
+
+        item.setUsed(true);
+        return item.getTranslation();
     }
 
     /**
@@ -62,7 +72,7 @@ public class Dictionary {
                 continue;
             }
             if (locale == null) {
-                throw new IOException("Не корректный словарь, отсутствует локаль. Строка: " + countLine);
+                throw new IllegalArgumentException("Not correct dictionary, there is no locale. Line: " + countLine);
             }
             if (line.startsWith("\"")) {
                 String[] pair = line.substring(1, line.length() - 1).split("\"=\"");
@@ -74,9 +84,39 @@ public class Dictionary {
                 dict.computeIfAbsent(locale, emptyList -> new ArrayList<>()).add(new DictionaryItem(pair));
                 continue;
             }
-            throw new IOException("Не корректная строка словаря. Строка: " + countLine);
+            throw new IllegalArgumentException("Incorrect dictionary string. The line must start with ` or \". Line:" + countLine);
         }
-
         return dict;
+    }
+
+    /**
+     * Проверяет словарь на дубликаты
+     */
+    private void checkDuplicates() {
+        Map<String, Set<String>> duplicates = dictonaty.entrySet().stream()
+                .collect(Collectors.toMap(entry -> entry.getKey(),
+                        entry -> entry.getValue().stream()
+                                .filter(item -> Collections.frequency(entry.getValue(), item) > 1)
+                                .map(item -> item.getLine()).collect(Collectors.toSet())));
+        boolean isError = duplicates.values().stream().anyMatch(value -> value.size() > 0);
+        if (isError) {
+            throw new IllegalArgumentException("Found duplicates in dictionary " + fileName + getDetailErrorMsg(duplicates));
+        }
+    }
+
+    /**
+     * Возвращает детальное сообщение об ошибке
+     * @param duplicates карта с дубликатами словаря
+     * @return детальное сообщение об ошибке
+     */
+    private String getDetailErrorMsg(Map<String, Set<String>> duplicates) {
+        StringBuilder sb = new StringBuilder("\n");
+        duplicates.entrySet().stream()
+                .filter(entry -> entry.getValue().size() > 0)
+                .forEach(entry -> {
+                    sb.append("Locale: ").append(entry.getKey()).append("\n");
+                    entry.getValue().stream().forEach(line -> sb.append(line).append("\n"));
+                });
+        return sb.toString();
     }
 }

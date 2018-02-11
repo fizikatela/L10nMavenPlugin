@@ -1,5 +1,7 @@
 package sidorovoleg.mojo.locale;
 
+import java.util.Objects;
+
 /**
  * Класс элемента словаря
  * @author fizikatela
@@ -54,5 +56,20 @@ public class DictionaryItem {
 
     public void setUsed(boolean used) {
         isUsed = used;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DictionaryItem that = (DictionaryItem) o;
+        return Objects.equals(line, that.line) &&
+                Objects.equals(translation, that.translation);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(line, translation);
     }
 }
