@@ -6,9 +6,8 @@ import java.nio.file.Path;
 import java.util.*;
 
 /**
- * Created by fizikatela
- * Email: aka.hunter@gmail.com
- * 28.01.2018.
+ * @author fizikatela
+ * Date: 28.01.2018
  */
 public class Dictionary {
 

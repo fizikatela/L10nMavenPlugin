@@ -8,7 +8,16 @@
   <packaging>maven-plugin</packaging>
 
   <name>l10n-maven-plugin</name>
-  <url>http://maven.apache.org</url>
+  <description>l10n-maven-plugin</description>
+  <url>https://github.com/fizikatela/L10nMavenPlugin</url>
+
+  <developers>
+    <developer>
+      <id>fizikatela</id>
+      <name>Oleg Sidorov</name>
+      <url>https://github.com/fizikatela</url>
+    </developer>
+  </developers>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

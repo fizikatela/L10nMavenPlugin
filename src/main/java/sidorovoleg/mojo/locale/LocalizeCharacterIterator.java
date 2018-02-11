@@ -6,9 +6,8 @@ import java.text.CharacterIterator;
 import java.util.Objects;
 
 /**
- * Created by fizikatela
- * Email: aka.hunter@gmail.com
- * 10.02.2018.
+ * @author fizikatela
+ * Date: 10.02.2018
  */
 public class LocalizeCharacterIterator implements CharacterIterator {
 
@@ -121,7 +120,11 @@ public class LocalizeCharacterIterator implements CharacterIterator {
     }
 
     public boolean equalsPrevious(char c) {
-        if (pos > 0) {
+        return equalsPrevious(c, pos);
+    }
+
+    public boolean equalsPrevious(char c, int pos) {
+        if (pos > 0 && pos < end) {
             return text.charAt(pos - 1) == c;
         }
         return false;
@@ -131,6 +134,23 @@ public class LocalizeCharacterIterator implements CharacterIterator {
         text = StringUtils.overlay(text, overlay, sIdx, eIdx);
         pos = sIdx + overlay.length();
         end = text.length();
+    }
+
+    public int findNext(char c) {
+        return findNext(c, pos + 1);
+    }
+
+    public int findNext(char c, int idx) {
+        return text.indexOf(c, idx);
+    }
+
+    public int findNext(char c, char excСhShielding) {
+        int findIdx = pos;
+        do {
+            findIdx++;
+            findIdx = findNext(c, findIdx);
+        } while (findIdx != -1 && equalsPrevious(excСhShielding, findIdx));
+        return  findIdx;
     }
 
     public String getText() {

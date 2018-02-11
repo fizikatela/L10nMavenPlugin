@@ -11,9 +11,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Created by fizikatela
- * Email: aka.hunter@gmail.com
- * 28.01.2018.
+ * @author fizikatela
+ * Date: 28.01.2018
  */
 public class L10nFileVizitor extends SimpleFileVisitor<Path> {
 

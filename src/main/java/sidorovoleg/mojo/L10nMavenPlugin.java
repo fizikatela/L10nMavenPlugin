@@ -16,9 +16,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Created by fizikatela
- * Email: aka.hunter@gmail.com
- * 27.01.2018.
+ * @author fizikatela
+ * Date: 28.01.2018
  */
 @Mojo(name = "l10n", defaultPhase = LifecyclePhase.PROCESS_SOURCES, threadSafe = true)
 public class L10nMavenPlugin extends AbstractMojo {
