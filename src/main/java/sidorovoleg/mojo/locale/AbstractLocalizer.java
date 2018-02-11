@@ -52,7 +52,12 @@ public abstract class AbstractLocalizer {
      * @param endIdx   индекс конца части строки для локализации
      */
     protected void translatesString(LocalizeCharacterIterator iterator, String locale, int beginIdx, int endIdx) {
-        String translation = dictionary.getTranslations(iterator.getText().substring(beginIdx, endIdx), locale);
+        String text = iterator.getText();
+        if (beginIdx >= endIdx || endIdx > text.length()) {
+            return;
+        }
+
+        String translation = dictionary.getTranslations(text.substring(beginIdx, endIdx), locale);
         if (translation != null) {
             iterator.overlayText(translation, beginIdx, endIdx);
         }

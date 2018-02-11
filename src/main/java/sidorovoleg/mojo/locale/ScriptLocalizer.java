@@ -26,19 +26,15 @@ public class ScriptLocalizer extends AbstractLocalizer {
             int beginIdx, endIdx;
             switch (c) {
                 case '`' :
-                    beginIdx = iterator.getIndex();
+                    beginIdx = iterator.getIndex() + 1;
                     endIdx = iterator.findNext(c);
-                    if (endIdx != -1) {
-                        translatesString(iterator, locale, beginIdx + 1, endIdx);
-                    }
+                    translatesString(iterator, locale, beginIdx, endIdx == -1 ? iterator.getEndIndex() : endIdx);
                     break;
                 case '"':
                     if (!iterator.equalsPrevious('\\')) {
-                        beginIdx = iterator.getIndex();
+                        beginIdx = iterator.getIndex() + 1;
                         endIdx = iterator.findNextWithoutShield(c, '\\');
-                        if (endIdx != -1) {
-                            translatesString(iterator, locale, beginIdx + 1, endIdx);
-                        }
+                        translatesString(iterator, locale, beginIdx, endIdx == -1 ? iterator.getEndIndex() : endIdx);
                     }
                     break;
             }
